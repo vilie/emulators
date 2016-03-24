@@ -6,6 +6,8 @@ uint8_t memory[4096]; /* memory */
 
 uint16_t IP; /* PC */
 uint16_t I; /* 16 bit register */
+uint8_t SP; /* Stack pointer */
+uint16_t stack[16]; /* stack registers */
 uint8_t delay_timer; /* Delay timer */
 uint8_t sound_timer; /* Sound timer */
 
@@ -36,7 +38,7 @@ int main() {
 	//printf("%s", sprites);
 	//printf("%s", memory);
 
-	int16_t opcode = 0xA123; /* should be 16 bit long */
+	int16_t opcode = 0xFA55; /* should be 16 bit long */
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -50,100 +52,194 @@ int main() {
 						printf("Return from func\n");
 						break;
 					default:
-						printf("Unknown 00%x\n", opcode);
+						printf("Unknown 00%X\n", opcode);
 						break;
 				}
 				break;
 			default: /* 0x0NNN */
-				printf("Call RCA 1802 at addr %x\n", opcode);
+				printf("Call RCA 1802 at addr %X\n", opcode);
 				break;
 		}
 		break;
 	case 0x1000:
-		printf("Jump to addr %x\n", opcode);
+		printf("Jump to addr %X\n", opcode);
 		break;
 	case 0x2000:
-		printf("Call subroutine at %x\n", opcode);
+		printf("Call subroutine at %X\n", opcode);
 		break;
 	case 0x3000:
-		printf("Skip next instruction if V%x equals %x\n", 
+		printf("Skip next instruction if V%X equals %X\n", 
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		break;
 	case 0x4000:
-		printf("Skip next instruction if V%x doesn't equal %x\n",
+		printf("Skip next instruction if V%X doesn't equal %X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		break;
 	case 0x5000:
-		printf("Skips the next instruction if V%x equals V%x\n",
+		printf("Skips the next instruction if V%X equals V%X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		break;
 	case 0x6000:
-		printf("Sets V%x to %x\n",
+		printf("Sets V%X to %X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		break;
 	case 0x7000:
-		printf("Adds %x	to V%x\n",
+		printf("Adds %X	to V%X\n",
 			(opcode & 0x00FF), (opcode & 0x0F00) >> 8);
 		break;
 	case 0x8000:
 		switch(opcode & 0x000F) {
 		case 0x0000:
-			printf("Sets V%x to V%x\n", 
+			printf("Sets V%X to V%X\n", 
 				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 			break;
 		case 0x0001:
-			printf("Sets V%x to V%x or V%x\n",
+			printf("Sets V%X to V%X or V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
 			break;
 		case 0x0002:
-			printf("Sets V%x to V%x and V%x\n",
+			printf("Sets V%X to V%X and V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
 		break;
 		case 0x0003:
-			printf("Sets V%x to V%x xor V%x\n",
+			printf("Sets V%X to V%X xor V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
 			break;
 		case 0x0004:
-			printf("Add V%x to V%x. VF set to 1 when carry.\n",
+			printf("Add V%X to V%X. VF set to 1 when carry.\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 			break;
 		case 0x0005:
-			printf("V%x is substracted from V%x. VF is set to 0 "
+			printf("V%X is substracted from V%X. VF is set to 0 "
 				"when there is a borrow, and 1 when there isn't\n",
 				(opcode & 0x00F0) >> 4, (opcode & 0x0F00) >> 8);
 			break;
 		case 0x0006:
-			printf("Shifts V%x right by one. VF is set to the "
-				"value of the least significant bit of the V%x "
+			printf("Shifts V%X right by one. VF is set to the "
+				"value of the least significant bit of the V%X "
 				"before the shift\n", (opcode & 0x0F00) >> 8,
 				(opcode & 0x0F00) >> 8);
 			break;
 		case 0x0007:
-			printf("Sets V%x to V%x minus V%x. VF is set to 0 when "
+			printf("Sets V%X to V%X minus V%X. VF is set to 0 when "
 				"there's a borrow, and 1 when there isn't\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F0) >> 4, 
 				(opcode & 0x0F00) >> 8);
 			break;
 		case 0x000E:
-			printf("Sets V%x left by one. VF is set to the value "
-				"of the most significant bit of V%x before the "
+			printf("Sets V%X left by one. VF is set to the value "
+				"of the most significant bit of V%X before the "
 				"shift\n", (opcode & 0x0F00) >> 8,
 				(opcode & 0x0F00) >> 8);
 			break;
 		default:
-			printf("Unknows opcode %x\n", opcode);
+			printf("Unknows opcode %X\n", opcode);
 		}
 		break;
 	case 0x9000:
-		printf("Skips the next instruction if V%x doesn't equal to V%x\n",
+		printf("Skips the next instruction if V%X doesn't equal to V%X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 			break;
 	case 0xA000:
-		printf("Sets I to address %x\n", opcode & 0x0FFF);
+		printf("Sets I to address %X\n", opcode & 0x0FFF);
 			break;
+	case 0xB000:
+		printf("Jumps to the address %X plus V0\n",
+			(opcode & 0x0FFF));
+			break;
+	case 0xC000:
+		printf("Sets V%X to the result of a bitwise and operation on "
+			"a random number and %X\n", (opcode & 0x0F00) >> 8,
+			(opcode & 0x00ff));
+			break;
+	case 0xD000: /* 0xDXYN */
+		printf("Sprites stored in memory at location in the index "
+			"register (L), 8 bits wide. Wraps around the screen "
+			"If when draws, clears a pixel, register VF is set to "
+			"1 otherwise it is zero. All drawing is XOR drawing "
+			"(i.e. it toggles the screen pixels). Sprites are "
+			"drawn at starting position V%X, V%X. %X is the number"
+			" of 8bit rows that need to be drawn. If N is greater "
+			"than 1, second line continues at position VX, VY+1, "
+			"and so on.", (opcode & 0x0F00) >> 8, 
+			(opcode & 0x00F0) >> 4, (opcode & 0x000F));
+			break;
+	case 0xE000:
+		switch(opcode & 0x000F) {
+		case 0x000E:
+			printf("Skips the next instruction if the key stored "
+				"in V%X is pressed \n", (opcode & 0x0F00) >> 8);
+			break;
+		case 0x0001:
+			printf("Skips the next instruction if the key stored "
+				"in V%X isn't pressed \n",
+				(opcode & 0x0F00) >> 8);
+			break;
+		default:
+			printf("Unknown opcode %hX\n", opcode);
+			break;
+		}
+		break;
+	case 0xF000:
+		switch (opcode & 0x000F) {
+		case 0x0007:
+			printf("Sets V%X to the value of the delay timer\n",
+				(opcode & 0x0F00) >> 8);
+			break;
+		case 0x000A:
+			printf("A key press is awaited, and then stored in "
+				"V%X \n", (opcode & 0x0F00) >> 8);
+			break;
+		case 0x0008:
+			printf("Sets the sound timer to V%X\n",
+				(opcode & 0x0F00) >> 8);
+			break;
+		case 0x000E:
+			printf("Adds V%X to L\n", (opcode %0x0F00) >> 8);
+			break;
+		case 0x0009:
+			printf("Sets L to the location of the sprite for the "
+				"character in V%X. Characters 0-F (in hexadeci"
+				"mal) are represented by a 4x5 font.\n",
+				(opcode & 0x0F00) >> 8);
+			break;
+		case 0x0003:
+			printf("Stores the Binary-coded decimal representation"
+				" of V%X, with the most significant three "
+				"digits at the address in L, the middle digit "
+				"at L plus 1, and the least significant digit "
+				"at L plus 2. \n", (opcode & 0x0F00) >> 8);
+			break;
+		case 0x0005:
+			switch (opcode & 0x00F0) {
+			case 0x0050:
+				printf("Stores V0 to V%X in memory starting "
+					"at address L\n",
+					(opcode & 0x0F00) >> 8);
+				break;
+			case 0x0060:
+				printf("Fills V0 to V%X with values from "
+					"memory starting at address L\n",
+					(opcode & 0x0F00) >> 8);
+				break;
+			case 0x0010:
+				printf("Sets the delay timer to V%X\n", 
+				(opcode & 0x0F00) >> 8);
+				break;
+			default:
+				printf("Unknown opcode %hX\n", opcode);
+				break;
+			}
+			break;
+		default:
+			printf("Unknown opcode %hX\n", opcode);
+			break;
+		}
+		break;
+ 
 	default:
 		printf("Other opcode\n");
 		break;

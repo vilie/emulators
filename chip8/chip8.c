@@ -5,6 +5,7 @@
 uint8_t memory[4096]; /* memory */
 
 uint16_t IP; /* PC */
+uint16_t I; /* 16 bit register */
 uint8_t delay_timer; /* Delay timer */
 uint8_t sound_timer; /* Sound timer */
 
@@ -35,7 +36,7 @@ int main() {
 	//printf("%s", sprites);
 	//printf("%s", memory);
 
-	int16_t opcode = 0x8FA3; /* should be 16 bit long */
+	int16_t opcode = 0xA123; /* should be 16 bit long */
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -109,10 +110,40 @@ int main() {
 			printf("Add V%x to V%x. VF set to 1 when carry.\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 			break;
+		case 0x0005:
+			printf("V%x is substracted from V%x. VF is set to 0 "
+				"when there is a borrow, and 1 when there isn't\n",
+				(opcode & 0x00F0) >> 4, (opcode & 0x0F00) >> 8);
+			break;
+		case 0x0006:
+			printf("Shifts V%x right by one. VF is set to the "
+				"value of the least significant bit of the V%x "
+				"before the shift\n", (opcode & 0x0F00) >> 8,
+				(opcode & 0x0F00) >> 8);
+			break;
+		case 0x0007:
+			printf("Sets V%x to V%x minus V%x. VF is set to 0 when "
+				"there's a borrow, and 1 when there isn't\n",
+				(opcode & 0x0F00) >> 8, (opcode & 0x0F0) >> 4, 
+				(opcode & 0x0F00) >> 8);
+			break;
+		case 0x000E:
+			printf("Sets V%x left by one. VF is set to the value "
+				"of the most significant bit of V%x before the "
+				"shift\n", (opcode & 0x0F00) >> 8,
+				(opcode & 0x0F00) >> 8);
+			break;
 		default:
-			printf("TODO\n");
+			printf("Unknows opcode %x\n", opcode);
 		}
 		break;
+	case 0x9000:
+		printf("Skips the next instruction if V%x doesn't equal to V%x\n",
+			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+			break;
+	case 0xA000:
+		printf("Sets I to address %x\n", opcode & 0x0FFF);
+			break;
 	default:
 		printf("Other opcode\n");
 		break;

@@ -1,3 +1,10 @@
+/*
+ * Author: Valentin Ilie
+ * Contact: <valentin.ilie@gmail.com>
+ * License: GNU General Public License (GPL) v3
+ * Copyright (C) 2016 Valentin Ilie
+ */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>

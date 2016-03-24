@@ -35,7 +35,7 @@ int main() {
 	//printf("%s", sprites);
 	//printf("%s", memory);
 
-	int16_t opcode = 0x52E1; /* should be 16 bit long */
+	int16_t opcode = 0x8FA3; /* should be 16 bit long */
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -84,7 +84,35 @@ int main() {
 		printf("Adds %x	to V%x\n",
 			(opcode & 0x00FF), (opcode & 0x0F00) >> 8);
 		break;
-
+	case 0x8000:
+		switch(opcode & 0x000F) {
+		case 0x0000:
+			printf("Sets V%x to V%x\n", 
+				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+			break;
+		case 0x0001:
+			printf("Sets V%x to V%x or V%x\n",
+				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
+				(opcode & 0x00F0) >> 4);
+			break;
+		case 0x0002:
+			printf("Sets V%x to V%x and V%x\n",
+				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
+				(opcode & 0x00F0) >> 4);
+		break;
+		case 0x0003:
+			printf("Sets V%x to V%x xor V%x\n",
+				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
+				(opcode & 0x00F0) >> 4);
+			break;
+		case 0x0004:
+			printf("Add V%x to V%x. VF set to 1 when carry.\n",
+				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+			break;
+		default:
+			printf("TODO\n");
+		}
+		break;
 	default:
 		printf("Other opcode\n");
 		break;

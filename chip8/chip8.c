@@ -14,6 +14,7 @@ uint8_t memory[4096]; /* memory */
 uint16_t IP; /* PC */
 uint16_t I; /* 16 bit register */
 uint8_t SP; /* Stack pointer */
+uint8_t V[16]; /* V registers */
 uint16_t stack[16]; /* stack registers */
 uint8_t delay_timer; /* Delay timer */
 uint8_t sound_timer; /* Sound timer */
@@ -70,21 +71,33 @@ int main() {
 		break;
 	case 0x1000:
 		printf("Jump to addr %X\n", opcode);
+		opcode = opcode & 0x0FFF;
 		break;
 	case 0x2000:
 		printf("Call subroutine at %X\n", opcode);
+		stack[SP++] = opcode;
+		opcode = opcode & 0x0FFF;
 		break;
 	case 0x3000:
 		printf("Skip next instruction if V%X equals %X\n", 
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
+		if(V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF))
+			opcode = opcode + 2;
+		opcode = opcode + 2;
 		break;
 	case 0x4000:
 		printf("Skip next instruction if V%X doesn't equal %X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
+		if(V[(opcode & 0x0F00) >> 8] != (opcode & 0x0FF))
+			opcode = opcode + 2;
+		opcode = opcode + 2;
 		break;
 	case 0x5000:
 		printf("Skips the next instruction if V%X equals V%X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+		if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F) >> 4])
+			opcode = opcode + 2;
+		opcode = opcode + 2;
 		break;
 	case 0x6000:
 		printf("Sets V%X to %X\n",

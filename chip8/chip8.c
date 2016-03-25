@@ -102,46 +102,73 @@ int main() {
 	case 0x6000:
 		printf("Sets V%X to %X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
+		V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
+		opcode = opcode + 2;
 		break;
 	case 0x7000:
 		printf("Adds %X	to V%X\n",
 			(opcode & 0x00FF), (opcode & 0x0F00) >> 8);
+		V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
+		opcode = opcode + 2;
 		break;
 	case 0x8000:
 		switch(opcode & 0x000F) {
 		case 0x0000:
 			printf("Sets V%X to V%X\n", 
 				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+			V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
+			opcode = opcode + 2;
 			break;
 		case 0x0001:
 			printf("Sets V%X to V%X or V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
+			V[(opcode & 0x0F00) >> 8] |= V[(opcode & 0x00F0) >> 4];
+			opcode = opcode + 2;
 			break;
 		case 0x0002:
 			printf("Sets V%X to V%X and V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
-		break;
+			V[(opcode & 0x0F00) >> 8] &= V[(opcode & 0x00F0) >> 4];
+			opcode = opcode + 2;
+			break;
 		case 0x0003:
 			printf("Sets V%X to V%X xor V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
+			V[(opcode & 0x0F00) >> 8] ^= V[(opcode & 0x00F0) >> 4];
+			opcode = opcode + 2;
 			break;
 		case 0x0004:
 			printf("Add V%X to V%X. VF set to 1 when carry.\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+			if(V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 4]))
+				V[0xF] = 1;
+			else
+				V[0xF] = 0;
+			V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
+			opcode = opcode + 2;
 			break;
 		case 0x0005:
-			printf("V%X is substracted from V%X. VF is set to 0 "
-				"when there is a borrow, and 1 when there isn't\n",
+			printf("V%X is substracted from V%X. VF is set to 0 wh"
+				"en there is a borrow, and 1 when there isn't\n",
 				(opcode & 0x00F0) >> 4, (opcode & 0x0F00) >> 8);
+			
+			if(V[(opcode & 0x0F00) >> 8] < V[(opcode & 0x00F0)])
+				V[0xF] = 1;
+			else
+				V[0xF] = 0;
+			V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
 			break;
 		case 0x0006:
 			printf("Shifts V%X right by one. VF is set to the "
 				"value of the least significant bit of the V%X "
 				"before the shift\n", (opcode & 0x0F00) >> 8,
 				(opcode & 0x0F00) >> 8);
+				V[0xF] = opcode & V[(opcode & 0x0F00) >> 8] & \
+					0x0001;
+				
 			break;
 		case 0x0007:
 			printf("Sets V%X to V%X minus V%X. VF is set to 0 when "

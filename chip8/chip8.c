@@ -166,21 +166,29 @@ int main() {
 				"value of the least significant bit of the V%X "
 				"before the shift\n", (opcode & 0x0F00) >> 8,
 				(opcode & 0x0F00) >> 8);
-				V[0xF] = opcode & V[(opcode & 0x0F00) >> 8] & \
-					0x0001;
-				
+			V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x0001;
+			V[(opcode & 0x0F00) >> 8] >>= 1;
 			break;
 		case 0x0007:
 			printf("Sets V%X to V%X minus V%X. VF is set to 0 when "
 				"there's a borrow, and 1 when there isn't\n",
-				(opcode & 0x0F00) >> 8, (opcode & 0x0F0) >> 4, 
+				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, 
 				(opcode & 0x0F00) >> 8);
+			if(V[(opcode & 0x00F0) >> 4] < V[(opcode & 0x0F00) >> 8])
+				V[0xF] = 0;
+			else
+				V[0xF] = 1;
+			V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4]-\
+				V[(opcode & 0x0F00) >> 8];
 			break;
 		case 0x000E:
 			printf("Sets V%X left by one. VF is set to the value "
 				"of the most significant bit of V%X before the "
 				"shift\n", (opcode & 0x0F00) >> 8,
 				(opcode & 0x0F00) >> 8);
+			V[0xF] = V[(opcode & 0x0F00) >> 8] >> 7 ;
+			V[(opcode & 0x0F00) >> 8] <<= 1;
+
 			break;
 		default:
 			printf("Unknows opcode %X\n", opcode);

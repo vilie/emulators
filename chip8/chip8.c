@@ -160,6 +160,7 @@ int main() {
 			else
 				V[0xF] = 0;
 			V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
+			opcode = opcode + 2;
 			break;
 		case 0x0006:
 			printf("Shifts V%X right by one. VF is set to the "
@@ -168,6 +169,7 @@ int main() {
 				(opcode & 0x0F00) >> 8);
 			V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x0001;
 			V[(opcode & 0x0F00) >> 8] >>= 1;
+			opcode = opcode + 2;
 			break;
 		case 0x0007:
 			printf("Sets V%X to V%X minus V%X. VF is set to 0 when "
@@ -180,6 +182,7 @@ int main() {
 				V[0xF] = 1;
 			V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4]-\
 				V[(opcode & 0x0F00) >> 8];
+			opcode = opcode + 2;
 			break;
 		case 0x000E:
 			printf("Sets V%X left by one. VF is set to the value "
@@ -188,7 +191,7 @@ int main() {
 				(opcode & 0x0F00) >> 8);
 			V[0xF] = V[(opcode & 0x0F00) >> 8] >> 7 ;
 			V[(opcode & 0x0F00) >> 8] <<= 1;
-
+			opcode = opcode + 2;
 			break;
 		default:
 			printf("Unknows opcode %X\n", opcode);
@@ -197,18 +200,27 @@ int main() {
 	case 0x9000:
 		printf("Skips the next instruction if V%X doesn't equal to V%X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+			if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4])
+				opcode = opcode + 4;
+			else
+				opcode = opcode + 2;
 			break;
 	case 0xA000:
 		printf("Sets I to address %X\n", opcode & 0x0FFF);
+			I = opcode & 0x0FFF;
+			opcode = opcode + 2;
 			break;
 	case 0xB000:
 		printf("Jumps to the address %X plus V0\n",
 			(opcode & 0x0FFF));
+			opcode = (opcode & 0x0FFF) + V[0];
 			break;
 	case 0xC000:
 		printf("Sets V%X to the result of a bitwise and operation on "
 			"a random number and %X\n", (opcode & 0x0F00) >> 8,
 			(opcode & 0x00ff));
+			V[(opcode & 0x0F00) >> 8] = 0x42 && (opcode & 0x00FF);
+			opcode = opcode + 2;
 			break;
 	case 0xD000: /* 0xDXYN */
 		printf("Sprites stored in memory at location in the index "

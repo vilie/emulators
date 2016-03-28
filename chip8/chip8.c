@@ -263,6 +263,8 @@ int main() {
 		case 0x0008:
 			printf("Sets the sound timer to V%X\n",
 				(opcode & 0x0F00) >> 8);
+			sound_timer = V[(opcode & 0x0F00) >> 8];
+			opcode = opcode + 2;
 			break;
 		case 0x000E:
 			printf("Adds V%X to L\n", (opcode %0x0F00) >> 8);
@@ -295,6 +297,8 @@ int main() {
 			case 0x0010:
 				printf("Sets the delay timer to V%X\n", 
 				(opcode & 0x0F00) >> 8);
+				delay_timer = V[(opcode & 0x0F00) >> 8];
+				opcode = opcode + 2;
 				break;
 			default:
 				printf("Unknown opcode %hX\n", opcode);

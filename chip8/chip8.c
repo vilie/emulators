@@ -213,7 +213,7 @@ int main() {
 	case 0xB000:
 		printf("Jumps to the address %X plus V0\n",
 			(opcode & 0x0FFF));
-			opcode = (opcode & 0x0FFF) + V[0];
+			opcode = (opcode & 0x0FFF) + V[0x0];
 			break;
 	case 0xC000:
 		printf("Sets V%X to the result of a bitwise and operation on "
@@ -255,6 +255,8 @@ int main() {
 		case 0x0007:
 			printf("Sets V%X to the value of the delay timer\n",
 				(opcode & 0x0F00) >> 8);
+			V[(opcode & 0x0F00) >> 8] = delay_timer;
+			opcode = opcode + 2;
 			break;
 		case 0x000A:
 			printf("A key press is awaited, and then stored in "
@@ -267,7 +269,9 @@ int main() {
 			opcode = opcode + 2;
 			break;
 		case 0x000E:
-			printf("Adds V%X to L\n", (opcode %0x0F00) >> 8);
+			printf("Adds V%X to I\n", (opcode & 0x0F00) >> 8);
+			I = I + V[(opcode & 0x0F00) >> 8];
+			opcode = opcode + 2;
 			break;
 		case 0x0009:
 			printf("Sets L to the location of the sprite for the "

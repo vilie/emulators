@@ -19,7 +19,7 @@ uint16_t stack[16]; /* stack registers */
 uint8_t delay_timer; /* Delay timer */
 uint8_t sound_timer; /* Sound timer */
 
-uint8_t screen_surface[64 * 32]; /* 64 x 32 screen */
+uint8_t screen_surface[64][32]; /* 64 x 32 screen */
 
 uint8_t sprites[80] = {
 	0xF0, 0x90, 0x90, 0x90, 0xF0, /* 0 */

@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <string.h>
 
+int update_screen(int* argc, char** argv);
+
 uint8_t memory[4096]; /* memory */
 
 uint16_t IP; /* PC */
@@ -40,7 +42,9 @@ uint8_t sprites[80] = {
 	0xF0, 0x80, 0xF0, 0x80, 0x80  /* F */
 };
 
-int main() {
+int main(int argc, char **argv) {
+	/* Init Display */
+	update_screen(&argc, argv);
 	/* init */
 	memcpy(memory, sprites, 80); /* copy sprites to memory */
 	//printf("%s", sprites);

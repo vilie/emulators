@@ -44,13 +44,25 @@ uint8_t sprites[80] = {
 };
 
 int main(int argc, char **argv) {
+	int i, j;
 	/* Init Display */
 	update_screen(&argc, argv);
 	/* init */
+	//up:
+	glutMainLoopEvent();
+	sleep(2);
+	screen_surface[0][0] = 1;
+	screen_surface[3][3] = 1;
+	screen_surface[63][0] = 1;
+	screen_surface[0][31] = 1;
+	screen_surface[63][31] = 1;
 	glutMainLoopEvent();
 	sleep(2);
 	screen_surface[1][1] = 1;
-	glutMainLoopEvent();
+	refreshScreen();
+	sleep(2);
+	screen_surface[3][4] = 1;
+	refreshScreen();
 	sleep(2);
 	printf("Hello World\n");
 	memcpy(memory, sprites, 80); /* copy sprites to memory */

@@ -24,10 +24,10 @@ void displayMe(void) {
 	glClear(GL_COLOR_BUFFER_BIT);	
 	glPointSize(10.0f);
 	glBegin(GL_POINTS);
-		glVertex3f(-1.0, -1.0, 0.0); // left, down
-		glVertex3f(1.0, 1.0, 0.0);   // right, up
-		glVertex3f(1.0, -1.0, 0.0);  // right, down
-		glVertex3f(-1.0, 1.0, 0.0);  // left, up
+		glVertex3f(-1.0, -1.0, 0.0); /* left, down */
+		glVertex3f(1.0, 1.0, 0.0);   /* right, up */
+		glVertex3f(1.0, -1.0, 0.0);  /* right, down */
+		glVertex3f(-1.0, 1.0, 0.0);  /* left, up */
 	glEnd();
 	glFlush();
 }
@@ -42,6 +42,6 @@ int update_screen(int* argc, char** argv)
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Emulator screen");
 	glutDisplayFunc(refreshScreen);
-	glutMainLoop();
+	/* glutMainLoop(); */
 	return 0;
 }

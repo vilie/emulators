@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <GL/glut.h>
 
 int update_screen(int* argc, char** argv);
 
@@ -46,6 +47,12 @@ int main(int argc, char **argv) {
 	/* Init Display */
 	update_screen(&argc, argv);
 	/* init */
+	glutMainLoopEvent();
+	sleep(2);
+	screen_surface[1][1] = 1;
+	glutMainLoopEvent();
+	sleep(2);
+	printf("Hello World\n");
 	memcpy(memory, sprites, 80); /* copy sprites to memory */
 	//printf("%s", sprites);
 	//printf("%s", memory);

@@ -15,7 +15,7 @@ int update_screen(int* argc, char** argv);
 uint8_t memory[4096]; /* memory */
 
 uint16_t IP; /* PC */
-uint16_t I = 70; /* 16 bit register */
+uint16_t I = 0; /* 16 bit register */
 uint8_t SP; /* Stack pointer */
 uint8_t V[16]; /* V registers */
 uint16_t stack[16]; /* stack registers */
@@ -56,7 +56,7 @@ int copytoRAM(int argc, char **argv) {
 		printf("Cannot read ROM, exit\n");
 		return -1;
 	}
-	fread(memory + 512, 1,  4, ptr_file);
+	fread(memory + 512, 1,  8, ptr_file);
 	fclose(ptr_file);
 	IP = 512;
 	return 0;
@@ -69,32 +69,17 @@ int main(int argc, char **argv) {
 	if(copytoRAM(argc, argv) < 0)
 		return -1;
 	
-	/* init */
-	/*
-	screen_surface[0][0] = 1;
-	screen_surface[3][3] = 1;
-	screen_surface[63][0] = 1;
-	screen_surface[0][31] = 1;
-	screen_surface[63][31] = 1;
-	refreshScreen();
-	sleep(2);
-	screen_surface[1][1] = 1;
-	refreshScreen();
-	sleep(2);
-	screen_surface[3][4] = 1;
-	refreshScreen();
-	sleep(2);
-	printf("Hello World\n");
-	*/
 	memcpy(memory, sprites, 80); /* copy sprites to memory */
-	//printf("%s", sprites);
-	//printf("%s", memory);
 
-	//int16_t opcode = 0xD335; /* should be 16 bit long */
 	uint16_t opcode = 0;
-	printf("memory %x memory %x\n", memory[512], memory[513]);
+
+	while(1) {
+
+	// printf("memory %x memory %x\n", memory[512], memory[513]);
+	opcode = 0;
 	opcode |= (memory[IP] << 8) & 0xFF00;
 	opcode |= memory[IP + 1] & 0x00FF;
+	printf("Processing opcode %x\n", opcode);
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -249,7 +234,7 @@ int main(int argc, char **argv) {
 		printf("Skips the next instruction if V%X doesn't equal to V%X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 			if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4])
-				opcode = opcode + 4;
+				IP = IP + 4;
 			else
 				IP = IP + 2;
 			break;
@@ -288,10 +273,8 @@ int main(int argc, char **argv) {
 			for (i = 0; i < nibble; i++)
 				for(j = 0; j < 7;j ++)
 					screen_surface[Vx + j][Vy + i] = (memory[I + i] >> (7- j)) & 0x0001;
-			//screen_surface[10][10] = 1;
-			//glutMainLoopEvent();
-			//refreshScreen();
-			//sleep(40);
+			/* glutMainLoopEvent(); */
+			/* refreshScreen(); */
 			refreshRequired = 1;
 			break;
 	case 0xE000:
@@ -385,6 +368,8 @@ int main(int argc, char **argv) {
 		refreshRequired = 0;
 		refreshScreen();
 	}
-	sleep(10);
+	sleep(5);
+
+	} // while 1
 	return 0;
 }

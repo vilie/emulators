@@ -7,7 +7,7 @@
 extern uint8_t screen_surface[WIDTH][HEIGHT];
 
 void refreshScreen() {
-	printf("Am intrat in refresh \n");
+	/* printf("Am intrat in refresh \n"); */
 	int i, j;
 	glClear(GL_COLOR_BUFFER_BIT);	
 	glPointSize(10.0f);
@@ -15,7 +15,7 @@ void refreshScreen() {
 	for(int i = 0; i < WIDTH; i++)
 		for(int j = 0; j < HEIGHT; j++)
 			if (screen_surface[i][j] == 1) {
-				printf("IJ %d %d\n", i, j);
+				/* printf("IJ %d %d\n", i, j); */
 				glVertex3f((float) (i - 31.5)/31.5,
 						(float) - (j - 15.5)/15.5, 0);
 			}
@@ -46,6 +46,6 @@ int update_screen(int* argc, char** argv)
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Emulator screen");
 	glutDisplayFunc(refreshScreen);
-	/* glutMainLoop(); */
+	glutMainLoopEvent();
 	return 0;
 }

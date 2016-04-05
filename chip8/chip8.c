@@ -56,7 +56,7 @@ int copytoRAM(int argc, char **argv) {
 		printf("Cannot read ROM, exit\n");
 		return -1;
 	}
-	fread(memory + 512, 1,  8, ptr_file);
+	fread(memory + 512, 1, 1200, ptr_file);
 	fclose(ptr_file);
 	IP = 512;
 	return 0;
@@ -87,7 +87,8 @@ int main(int argc, char **argv) {
 			case 0x0000: /* 0x00NN */
 				switch(opcode) {
 					case 0x00E0:
-						printf("Clear screen\n");
+						printf("TODO: Clear screen\n");
+						IP = IP + 2;
 						break;
 					case 0x00EE:
 						printf("Return from func\n");
@@ -264,7 +265,7 @@ int main(int argc, char **argv) {
 			"drawn at starting position V%X, V%X. %X is the number"
 			" of 8bit rows that need to be drawn. If N is greater "
 			"than 1, second line continues at position VX, VY+1, "
-			"and so on.", (opcode & 0x0F00) >> 8, 
+			"and so on.\n", (opcode & 0x0F00) >> 8,
 			(opcode & 0x00F0) >> 4, (opcode & 0x000F));
 			int8_t Vx = (opcode & 0x0F00) >> 8;
 			int8_t Vy = (opcode & 0x00F0) >> 4;
@@ -276,6 +277,7 @@ int main(int argc, char **argv) {
 			/* glutMainLoopEvent(); */
 			/* refreshScreen(); */
 			refreshRequired = 1;
+			IP = IP + 2;
 			break;
 	case 0xE000:
 		switch(opcode & 0x000F) {
@@ -368,7 +370,7 @@ int main(int argc, char **argv) {
 		refreshRequired = 0;
 		refreshScreen();
 	}
-	sleep(5);
+	usleep(100);
 
 	} // while 1
 	return 0;

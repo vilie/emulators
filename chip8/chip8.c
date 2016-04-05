@@ -79,7 +79,23 @@ int main(int argc, char **argv) {
 	opcode = 0;
 	opcode |= (memory[IP] << 8) & 0xFF00;
 	opcode |= memory[IP + 1] & 0x00FF;
-	printf("IP = %x; processing opcode %x\n", IP, opcode);
+
+	printf("System status\n\n");
+	for(i = 0; i < 16; i++)
+		printf("V%X ", i);
+	printf("\n");
+	for(i = 0; i < 16; i++)
+		printf("%2X ", V[i]);
+	printf("\n\n");
+	for(i = 0; i < 16; i++)
+		printf("I%X ", i);
+	printf("\n");
+	for(i = 0; i < 16; i++)
+		printf("%2X ", memory[I+i]);
+	printf("\n"); 
+
+
+	printf("IP = %x; opcode %x; I=%x\n", IP, opcode, I);
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -381,6 +397,7 @@ int main(int argc, char **argv) {
 		refreshRequired = 0;
 		refreshScreen();
 	}
+	printf("\n");
 	getchar();
 
 	} // while 1

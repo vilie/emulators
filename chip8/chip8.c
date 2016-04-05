@@ -15,12 +15,13 @@ int update_screen(int* argc, char** argv);
 uint8_t memory[4096]; /* memory */
 
 uint16_t IP; /* PC */
-uint16_t I; /* 16 bit register */
+uint16_t I = 70; /* 16 bit register */
 uint8_t SP; /* Stack pointer */
 uint8_t V[16]; /* V registers */
 uint16_t stack[16]; /* stack registers */
 uint8_t delay_timer; /* Delay timer */
 uint8_t sound_timer; /* Sound timer */
+int refreshRequired; /* Screen refresh required */
 
 uint8_t screen_surface[64][32]; /* 64 x 32 screen */
 
@@ -43,20 +44,39 @@ uint8_t sprites[80] = {
 	0xF0, 0x80, 0xF0, 0x80, 0x80  /* F */
 };
 
+int copytoRAM(int argc, char **argv) {
+	FILE *ptr_file;
+	int i;
+	ptr_file = fopen(argv[1], "rb");
+	if(argc == 1) {
+		printf("Please specify ROM as param\n");
+		return -2;
+	}
+	if(!ptr_file) {
+		printf("Cannot read ROM, exit\n");
+		return -1;
+	}
+	fread(memory + 512, 1,  4, ptr_file);
+	fclose(ptr_file);
+	IP = 512;
+	return 0;
+}
+
 int main(int argc, char **argv) {
 	int i, j;
 	/* Init Display */
 	update_screen(&argc, argv);
+	if(copytoRAM(argc, argv) < 0)
+		return -1;
+	
 	/* init */
-	//up:
-	glutMainLoopEvent();
-	sleep(2);
+	/*
 	screen_surface[0][0] = 1;
 	screen_surface[3][3] = 1;
 	screen_surface[63][0] = 1;
 	screen_surface[0][31] = 1;
 	screen_surface[63][31] = 1;
-	glutMainLoopEvent();
+	refreshScreen();
 	sleep(2);
 	screen_surface[1][1] = 1;
 	refreshScreen();
@@ -65,11 +85,16 @@ int main(int argc, char **argv) {
 	refreshScreen();
 	sleep(2);
 	printf("Hello World\n");
+	*/
 	memcpy(memory, sprites, 80); /* copy sprites to memory */
 	//printf("%s", sprites);
 	//printf("%s", memory);
 
-	int16_t opcode = 0xFA55; /* should be 16 bit long */
+	//int16_t opcode = 0xD335; /* should be 16 bit long */
+	uint16_t opcode = 0;
+	printf("memory %x memory %x\n", memory[512], memory[513]);
+	opcode |= (memory[IP] << 8) & 0xFF00;
+	opcode |= memory[IP + 1] & 0x00FF;
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -105,34 +130,34 @@ int main(int argc, char **argv) {
 		printf("Skip next instruction if V%X equals %X\n", 
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		if(V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF))
-			opcode = opcode + 2;
-		opcode = opcode + 2;
+			IP = IP + 2;
+		IP = IP + 2;
 		break;
 	case 0x4000:
 		printf("Skip next instruction if V%X doesn't equal %X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		if(V[(opcode & 0x0F00) >> 8] != (opcode & 0x0FF))
-			opcode = opcode + 2;
-		opcode = opcode + 2;
+			IP = IP + 2;
+		IP = IP + 2;
 		break;
 	case 0x5000:
 		printf("Skips the next instruction if V%X equals V%X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 		if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F) >> 4])
-			opcode = opcode + 2;
-		opcode = opcode + 2;
+			IP = IP + 2;
+		IP = IP + 2;
 		break;
 	case 0x6000:
 		printf("Sets V%X to %X\n",
 			(opcode & 0x0F00) >> 8, (opcode & 0x00FF));
 		V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
-		opcode = opcode + 2;
+		IP = IP + 2;
 		break;
 	case 0x7000:
 		printf("Adds %X	to V%X\n",
 			(opcode & 0x00FF), (opcode & 0x0F00) >> 8);
 		V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
-		opcode = opcode + 2;
+		IP = IP + 2;
 		break;
 	case 0x8000:
 		switch(opcode & 0x000F) {
@@ -140,28 +165,28 @@ int main(int argc, char **argv) {
 			printf("Sets V%X to V%X\n", 
 				(opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
 			V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0001:
 			printf("Sets V%X to V%X or V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
 			V[(opcode & 0x0F00) >> 8] |= V[(opcode & 0x00F0) >> 4];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0002:
 			printf("Sets V%X to V%X and V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
 			V[(opcode & 0x0F00) >> 8] &= V[(opcode & 0x00F0) >> 4];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0003:
 			printf("Sets V%X to V%X xor V%X\n",
 				(opcode & 0x0F00) >> 8, (opcode & 0x0F00) >> 8,
 				(opcode & 0x00F0) >> 4);
 			V[(opcode & 0x0F00) >> 8] ^= V[(opcode & 0x00F0) >> 4];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0004:
 			printf("Add V%X to V%X. VF set to 1 when carry.\n",
@@ -171,7 +196,7 @@ int main(int argc, char **argv) {
 			else
 				V[0xF] = 0;
 			V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0005:
 			printf("V%X is substracted from V%X. VF is set to 0 wh"
@@ -183,7 +208,7 @@ int main(int argc, char **argv) {
 			else
 				V[0xF] = 0;
 			V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0006:
 			printf("Shifts V%X right by one. VF is set to the "
@@ -192,7 +217,7 @@ int main(int argc, char **argv) {
 				(opcode & 0x0F00) >> 8);
 			V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x0001;
 			V[(opcode & 0x0F00) >> 8] >>= 1;
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0007:
 			printf("Sets V%X to V%X minus V%X. VF is set to 0 when "
@@ -205,7 +230,7 @@ int main(int argc, char **argv) {
 				V[0xF] = 1;
 			V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4]-\
 				V[(opcode & 0x0F00) >> 8];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x000E:
 			printf("Sets V%X left by one. VF is set to the value "
@@ -214,7 +239,7 @@ int main(int argc, char **argv) {
 				(opcode & 0x0F00) >> 8);
 			V[0xF] = V[(opcode & 0x0F00) >> 8] >> 7 ;
 			V[(opcode & 0x0F00) >> 8] <<= 1;
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		default:
 			printf("Unknows opcode %X\n", opcode);
@@ -226,12 +251,12 @@ int main(int argc, char **argv) {
 			if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4])
 				opcode = opcode + 4;
 			else
-				opcode = opcode + 2;
+				IP = IP + 2;
 			break;
 	case 0xA000:
 		printf("Sets I to address %X\n", opcode & 0x0FFF);
 			I = opcode & 0x0FFF;
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 	case 0xB000:
 		printf("Jumps to the address %X plus V0\n",
@@ -243,7 +268,7 @@ int main(int argc, char **argv) {
 			"a random number and %X\n", (opcode & 0x0F00) >> 8,
 			(opcode & 0x00ff));
 			V[(opcode & 0x0F00) >> 8] = 0x42 && (opcode & 0x00FF);
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 	case 0xD000: /* 0xDXYN */
 		printf("Sprites stored in memory at location in the index "
@@ -256,6 +281,18 @@ int main(int argc, char **argv) {
 			"than 1, second line continues at position VX, VY+1, "
 			"and so on.", (opcode & 0x0F00) >> 8, 
 			(opcode & 0x00F0) >> 4, (opcode & 0x000F));
+			int8_t Vx = (opcode & 0x0F00) >> 8;
+			int8_t Vy = (opcode & 0x00F0) >> 4;
+			int8_t nibble = (opcode & 0x000F);
+			int8_t i, j;
+			for (i = 0; i < nibble; i++)
+				for(j = 0; j < 7;j ++)
+					screen_surface[Vx + j][Vy + i] = (memory[I + i] >> (7- j)) & 0x0001;
+			//screen_surface[10][10] = 1;
+			//glutMainLoopEvent();
+			//refreshScreen();
+			//sleep(40);
+			refreshRequired = 1;
 			break;
 	case 0xE000:
 		switch(opcode & 0x000F) {
@@ -279,7 +316,7 @@ int main(int argc, char **argv) {
 			printf("Sets V%X to the value of the delay timer\n",
 				(opcode & 0x0F00) >> 8);
 			V[(opcode & 0x0F00) >> 8] = delay_timer;
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x000A:
 			printf("A key press is awaited, and then stored in "
@@ -289,12 +326,12 @@ int main(int argc, char **argv) {
 			printf("Sets the sound timer to V%X\n",
 				(opcode & 0x0F00) >> 8);
 			sound_timer = V[(opcode & 0x0F00) >> 8];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x000E:
 			printf("Adds V%X to I\n", (opcode & 0x0F00) >> 8);
 			I = I + V[(opcode & 0x0F00) >> 8];
-			opcode = opcode + 2;
+			IP = IP + 2;
 			break;
 		case 0x0009:
 			printf("Sets L to the location of the sprite for the "
@@ -325,7 +362,7 @@ int main(int argc, char **argv) {
 				printf("Sets the delay timer to V%X\n", 
 				(opcode & 0x0F00) >> 8);
 				delay_timer = V[(opcode & 0x0F00) >> 8];
-				opcode = opcode + 2;
+				IP = IP + 2;
 				break;
 			default:
 				printf("Unknown opcode %hX\n", opcode);
@@ -342,6 +379,12 @@ int main(int argc, char **argv) {
 		printf("Other opcode\n");
 		break;
 	
-	}		
+	}
+
+	if (refreshRequired) {
+		refreshRequired = 0;
+		refreshScreen();
+	}
+	sleep(10);
 	return 0;
 }

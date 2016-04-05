@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 	opcode = 0;
 	opcode |= (memory[IP] << 8) & 0xFF00;
 	opcode |= memory[IP + 1] & 0x00FF;
-	printf("Processing opcode %x\n", opcode);
+	printf("IP = %x; processing opcode %x\n", IP, opcode);
 
 	switch(opcode & 0xF000) {
 	case 0x0000: /* 0x0NNN */
@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
 						IP = IP + 2;
 						break;
 					case 0x00EE:
+						IP = stack[SP--];
 						printf("Return from func\n");
 						break;
 					default:
@@ -104,11 +105,11 @@ int main(int argc, char **argv) {
 		}
 		break;
 	case 0x1000:
-		printf("Jump to addr %X\n", opcode);
+		printf("Jump to addr %X\n", opcode & 0x0FFF);
 		IP = opcode & 0x0FFF;
 		break;
 	case 0x2000:
-		printf("Call subroutine at %X\n", opcode);
+		printf("Call subroutine at %X\n", opcode & 0x0FFF);
 		stack[SP++] = IP;
 		IP = opcode & 0x0FFF;
 		break;
@@ -330,6 +331,10 @@ int main(int argc, char **argv) {
 				"digits at the address in L, the middle digit "
 				"at L plus 1, and the least significant digit "
 				"at L plus 2. \n", (opcode & 0x0F00) >> 8);
+				memory[I] = V[(opcode & 0x0F00) >> 8] / 100;
+				memory[I + 1] = (V[(opcode & 0x0F00) >> 8] / 10) % 10;
+				memory[I + 2] = V[(opcode & 0x0F00) >> 8] % 10;
+				IP = IP + 2;
 			break;
 		case 0x0005:
 			switch (opcode & 0x00F0) {
@@ -337,11 +342,17 @@ int main(int argc, char **argv) {
 				printf("Stores V0 to V%X in memory starting "
 					"at address L\n",
 					(opcode & 0x0F00) >> 8);
+				for(i = 0; i < (opcode & 0x0F00) >> 8; i++)
+					memory[I + i] = V[i];
+				IP = IP + 2;
 				break;
 			case 0x0060:
 				printf("Fills V0 to V%X with values from "
 					"memory starting at address L\n",
 					(opcode & 0x0F00) >> 8);
+				for(i = 0; i < (opcode & 0x0F00) >> 8; i++)
+					V[i] = memory[I + i];
+				IP = IP + 2;
 				break;
 			case 0x0010:
 				printf("Sets the delay timer to V%X\n", 
@@ -370,7 +381,7 @@ int main(int argc, char **argv) {
 		refreshRequired = 0;
 		refreshScreen();
 	}
-	usleep(100);
+	getchar();
 
 	} // while 1
 	return 0;

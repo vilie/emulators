@@ -119,12 +119,12 @@ int main(int argc, char **argv) {
 		break;
 	case 0x1000:
 		printf("Jump to addr %X\n", opcode);
-		opcode = opcode & 0x0FFF;
+		IP = opcode & 0x0FFF;
 		break;
 	case 0x2000:
 		printf("Call subroutine at %X\n", opcode);
-		stack[SP++] = opcode;
-		opcode = opcode & 0x0FFF;
+		stack[SP++] = IP;
+		IP = opcode & 0x0FFF;
 		break;
 	case 0x3000:
 		printf("Skip next instruction if V%X equals %X\n", 

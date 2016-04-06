@@ -345,7 +345,7 @@ int main(int argc, char **argv) {
 				printf("Stores V0 to V%X in memory starting "
 					"at address L\n",
 					(opcode & 0x0F00) >> 8);
-				for(i = 0; i < (opcode & 0x0F00) >> 8; i++)
+				for(i = 0; i <= (opcode & 0x0F00) >> 8; i++)
 					memory[I + i] = V[i];
 				IP = IP + 2;
 				break;
@@ -353,7 +353,7 @@ int main(int argc, char **argv) {
 				printf("Fills V0 to V%X with values from "
 					"memory starting at address L\n",
 					(opcode & 0x0F00) >> 8);
-				for(i = 0; i < (opcode & 0x0F00) >> 8; i++)
+				for(i = 0; i <= (opcode & 0x0F00) >> 8; i++)
 					V[i] = memory[I + i];
 				IP = IP + 2;
 				break;
@@ -379,6 +379,10 @@ int main(int argc, char **argv) {
 		break;
 	
 	}
+
+	delay_timer--;
+	if(delay_timer < 0)
+		delay_timer = 0;
 
 	if (refreshRequired) {
 		refreshRequired = 0;

@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 						IP = IP + 2;
 						break;
 					case 0x00EE:
-						IP = stack[SP--];
+						IP = stack[--SP];
 						printf("Return from func\n");
 						break;
 					default:
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 		break;
 	case 0x2000:
 		printf("Call subroutine at %X\n", opcode & 0x0FFF);
-		stack[SP++] = IP;
+		stack[SP++] = IP + 2;
 		IP = opcode & 0x0FFF;
 		break;
 	case 0x3000:
@@ -321,10 +321,12 @@ int main(int argc, char **argv) {
 			IP = IP + 2;
 			break;
 		case 0x0009:
-			printf("Sets L to the location of the sprite for the "
+			printf("Sets I to the location of the sprite for the "
 				"character in V%X. Characters 0-F (in hexadeci"
 				"mal) are represented by a 4x5 font.\n",
 				(opcode & 0x0F00) >> 8);
+			I = V[(0x0F00) >> 8] * 5;
+			IP = IP + 2;
 			break;
 		case 0x0003:
 			printf("Stores the Binary-coded decimal representation"
@@ -397,7 +399,7 @@ int main(int argc, char **argv) {
 	for(i = 0; i < 16; i++)
 		printf("%2X ", memory[I+i]);
 	printf("\n");
-	printf("*) After: I=%X", I);
+	printf("*) After: I=%X, SP=%X", I, SP);
 	printf("\n\n");
 
 	getchar();

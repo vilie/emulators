@@ -57,7 +57,7 @@ int copytoRAM(int argc, char **argv) {
 		printf("Cannot read ROM, exit\n");
 		return -1;
 	}
-	fread(memory + 512, 1, 1200, ptr_file);
+	fread(memory + 512, 1, 1500, ptr_file);
 	fclose(ptr_file);
 	IP = 512;
 	return 0;
@@ -416,7 +416,7 @@ int main(int argc, char **argv) {
 	printf("*) After: I=%X, SP=%X", I, SP);
 	printf("\n\n");
 
-	getchar();
+//	getchar();
 
 	} // while 1
 	return 0;

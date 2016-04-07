@@ -272,7 +272,9 @@ int main(int argc, char **argv) {
 			"and so on.\n", (opcode & 0x0F00) >> 8,
 			(opcode & 0x00F0) >> 4, (opcode & 0x000F));
 			int8_t Vx = (opcode & 0x0F00) >> 8;
+			Vx = V[Vx];
 			int8_t Vy = (opcode & 0x00F0) >> 4;
+			Vy = V[Vy];
 			int8_t nibble = (opcode & 0x000F);
 			int8_t i, j;
 			V[0xF] = 0;

@@ -278,7 +278,7 @@ int main(int argc, char **argv) {
 			V[0xF] = 0;
 			for (i = 0; i < nibble; i++)
 				for(j = 0; j < 7;j ++) {
-					if(screen_surface[Vx +j][Vy + 1] == 1 && ((memory[I +i] >> (7 - j)) & 0x0001) == 0)
+					if(screen_surface[Vx +j][Vy + i] == 1 && ((memory[I +i] >> (7 - j)) & 0x0001) == 1)
 						V[0xF] = 1;
 					screen_surface[Vx + j][Vy + i] ^= (memory[I + i] >> (7- j)) & 0x0001;
 			}
@@ -333,7 +333,7 @@ int main(int argc, char **argv) {
 				"character in V%X. Characters 0-F (in hexadeci"
 				"mal) are represented by a 4x5 font.\n",
 				(opcode & 0x0F00) >> 8);
-			I = V[(0x0F00) >> 8] * 5;
+			I = V[(opcode & 0x0F00) >> 8] * 5;
 			IP = IP + 2;
 			break;
 		case 0x0003:

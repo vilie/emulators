@@ -47,7 +47,6 @@ uint8_t sprites[80] = {
 
 int copytoRAM(int argc, char **argv) {
 	FILE *ptr_file;
-	int i;
 	ptr_file = fopen(argv[1], "rb");
 	if(argc == 1) {
 		printf("Please specify ROM as param\n");
@@ -310,7 +309,7 @@ int main(int argc, char **argv) {
 				(opcode & 0x0F00) >> 8);
 			if(keyPressedEv != V[(opcode & 0x0F00) >> 8]) {
 				IP = IP + 2;
-				//keyPressedEv = 42;
+				keyPressedEv = 42;
 			}
 			IP = IP + 2;
 			break;
@@ -330,6 +329,12 @@ int main(int argc, char **argv) {
 		case 0x000A:
 			printf("A key press is awaited, and then stored in "
 				"V%X \n", (opcode & 0x0F00) >> 8);
+			if(keyPressedEv < 16 && keyPressedEv >= 0) {
+				V[(opcode & 0x0F00) >> 8] = keyPressedEv;
+				IP = IP + 2;
+			}
+			keyPressedEv = 42;
+			//IP = IP + 2;
 			break;
 		case 0x0008:
 			printf("Sets the sound timer to V%X\n",
@@ -402,7 +407,8 @@ int main(int argc, char **argv) {
 	
 	}
 
-	delay_timer--;
+	if(rand() % 10 == 0)
+		delay_timer--;
 	if(delay_timer < 0)
 		delay_timer = 0;
 
@@ -430,7 +436,7 @@ int main(int argc, char **argv) {
 	printf("*) After: I=%X, SP=%X, delay_timer=%X", I, SP, delay_timer);
 	printf("\n\n");
 
-	usleep(1660);
+	//usleep(1660);
 	//getchar();
 
 	} // while 1

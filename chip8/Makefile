@@ -1,6 +1,6 @@
 all: chip8
 chip8: chip8.c screen_opengl.o
-	$(CC) $^ -o $@ -lglut -lGL
+	$(CC) $^ -o $@ -lglut -lGL -Wall
 screen_opengl.o: screen_opengl.c
 	$(CC) $^ -c -o $@
 screen_ncurses: screen_ncurses.c

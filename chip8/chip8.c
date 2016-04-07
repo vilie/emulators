@@ -298,19 +298,21 @@ int main(int argc, char **argv) {
 		case 0x000E:
 			printf("Skips the next instruction if the key stored "
 				"in V%X is pressed \n", (opcode & 0x0F00) >> 8);
-			if(keyPressedEv == V[(opcode & 0x0F00) >> 8])
+			if(keyPressedEv == V[(opcode & 0x0F00) >> 8]) {
 				IP = IP + 2;
+				keyPressedEv = 42;
+			}
 			IP = IP + 2;
-			keyPressedEv = 42;
 			break;
 		case 0x0001:
 			printf("Skips the next instruction if the key stored "
 				"in V%X isn't pressed \n",
 				(opcode & 0x0F00) >> 8);
-			if(keyPressedEv != V[(opcode & 0x0F00) >> 8])
+			if(keyPressedEv != V[(opcode & 0x0F00) >> 8]) {
 				IP = IP + 2;
+				keyPressedEv = 42;
+			}
 			IP = IP + 2;
-			keyPressedEv = 42;
 			break;
 		default:
 			printf("Unknown opcode %hX\n", opcode);

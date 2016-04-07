@@ -20,8 +20,8 @@ uint16_t I = 0; /* 16 bit register */
 uint8_t SP; /* Stack pointer */
 uint8_t V[16]; /* V registers */
 uint16_t stack[16]; /* stack registers */
-uint8_t delay_timer; /* Delay timer */
-uint8_t sound_timer; /* Sound timer */
+int8_t delay_timer; /* Delay timer */
+int8_t sound_timer; /* Sound timer */
 int refreshRequired; /* Screen refresh required */
 
 uint8_t screen_surface[64][32]; /* 64 x 32 screen */
@@ -310,7 +310,7 @@ int main(int argc, char **argv) {
 				(opcode & 0x0F00) >> 8);
 			if(keyPressedEv != V[(opcode & 0x0F00) >> 8]) {
 				IP = IP + 2;
-				keyPressedEv = 42;
+				//keyPressedEv = 42;
 			}
 			IP = IP + 2;
 			break;
@@ -427,10 +427,10 @@ int main(int argc, char **argv) {
 	for(i = 0; i < 16; i++)
 		printf("%2X ", memory[I+i]);
 	printf("\n");
-	printf("*) After: I=%X, SP=%X", I, SP);
+	printf("*) After: I=%X, SP=%X, delay_timer=%X", I, SP, delay_timer);
 	printf("\n\n");
 
-	usleep(300);
+	usleep(1660);
 	//getchar();
 
 	} // while 1

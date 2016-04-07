@@ -279,7 +279,7 @@ int main(int argc, char **argv) {
 			int8_t i, j;
 			V[0xF] = 0;
 			for (i = 0; i < nibble; i++)
-				for(j = 0; j < 7;j ++) {
+				for(j = 0; j < 8;j ++) {
 					if(screen_surface[Vx +j][Vy + i] == 1 && ((memory[I +i] >> (7 - j)) & 0x0001) == 1)
 						V[0xF] = 1;
 					screen_surface[Vx + j][Vy + i] ^= (memory[I + i] >> (7- j)) & 0x0001;

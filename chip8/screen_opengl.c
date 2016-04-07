@@ -5,6 +5,7 @@
 #define WIDTH 64
 
 extern uint8_t screen_surface[WIDTH][HEIGHT];
+extern uint8_t keyPressedEv;
 
 void refreshScreen() {
 	/* printf("Am intrat in refresh \n"); */
@@ -21,6 +22,13 @@ void refreshScreen() {
 			}
 	glEnd();
 	glFlush();
+}
+
+void keyPressed(unsigned char key, int x, int y) {
+	unsigned char keys[16] = {"1234qwerasdfzxcv"};
+	for(uint8_t i = 0; i < 16; i++)
+		if(key == keys[i])
+			keyPressedEv = i;
 }
 	
 
@@ -46,6 +54,7 @@ int update_screen(int* argc, char** argv)
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Emulator screen");
 	glutDisplayFunc(refreshScreen);
+	glutKeyboardFunc(keyPressed);
 	glutMainLoopEvent();
 	return 0;
 }

@@ -14,7 +14,7 @@
 int update_screen(int* argc, char** argv);
 
 uint8_t memory[4096]; /* memory */
-
+uint8_t keyPressedEv; /* Key that was pressed in this cycle */
 uint16_t IP; /* PC */
 uint16_t I = 0; /* 16 bit register */
 uint8_t SP; /* Stack pointer */
@@ -90,7 +90,11 @@ int main(int argc, char **argv) {
 			case 0x0000: /* 0x00NN */
 				switch(opcode) {
 					case 0x00E0:
-						printf("TODO: Clear screen\n");
+						printf("Clear screen\n");
+						for(i = 0; i < 64; i++)
+							for(j = 0; j < 32; j++)
+								screen_surface[i][j] = 0;
+						refreshRequired = 1;
 						IP = IP + 2;
 						break;
 					case 0x00EE:
@@ -292,15 +296,21 @@ int main(int argc, char **argv) {
 	case 0xE000:
 		switch(opcode & 0x000F) {
 		case 0x000E:
-			printf("TODO: Skips the next instruction if the key stored "
+			printf("Skips the next instruction if the key stored "
 				"in V%X is pressed \n", (opcode & 0x0F00) >> 8);
+			if(keyPressedEv == V[(opcode & 0x0F00) >> 8])
+				IP = IP + 2;
 			IP = IP + 2;
+			keyPressedEv = 42;
 			break;
 		case 0x0001:
 			printf("Skips the next instruction if the key stored "
 				"in V%X isn't pressed \n",
 				(opcode & 0x0F00) >> 8);
-			IP = IP + 4;
+			if(keyPressedEv != V[(opcode & 0x0F00) >> 8])
+				IP = IP + 2;
+			IP = IP + 2;
+			keyPressedEv = 42;
 			break;
 		default:
 			printf("Unknown opcode %hX\n", opcode);
@@ -397,7 +407,9 @@ int main(int argc, char **argv) {
 	if (refreshRequired) {
 		refreshRequired = 0;
 		refreshScreen();
+		//glutMainLoopEvent();
 	}
+	glutMainLoopEvent(); /* Check if a key was pressed */
 	/* printf("\n"); */
 
 	printf("System status\n\n");
@@ -416,7 +428,8 @@ int main(int argc, char **argv) {
 	printf("*) After: I=%X, SP=%X", I, SP);
 	printf("\n\n");
 
-//	getchar();
+	usleep(300);
+	//getchar();
 
 	} // while 1
 	return 0;

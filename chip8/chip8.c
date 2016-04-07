@@ -309,7 +309,7 @@ int main(int argc, char **argv) {
 				(opcode & 0x0F00) >> 8);
 			if(keyPressedEv != V[(opcode & 0x0F00) >> 8]) {
 				IP = IP + 2;
-				keyPressedEv = 42;
+				//keyPressedEv = 42;
 			}
 			IP = IP + 2;
 			break;
@@ -436,7 +436,7 @@ int main(int argc, char **argv) {
 	printf("*) After: I=%X, SP=%X, delay_timer=%X", I, SP, delay_timer);
 	printf("\n\n");
 
-	//usleep(1660);
+	usleep(1660);
 	//getchar();
 
 	} // while 1

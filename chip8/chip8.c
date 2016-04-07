@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <time.h>
 #include <GL/glut.h>
 
 int update_screen(int* argc, char** argv);
@@ -64,6 +65,7 @@ int copytoRAM(int argc, char **argv) {
 
 int main(int argc, char **argv) {
 	int i, j;
+	srand(time(NULL));
 	/* Init Display */
 	update_screen(&argc, argv);
 	if(copytoRAM(argc, argv) < 0)
@@ -255,7 +257,7 @@ int main(int argc, char **argv) {
 		printf("Sets V%X to the result of a bitwise and operation on "
 			"a random number and %X\n", (opcode & 0x0F00) >> 8,
 			(opcode & 0x00ff));
-			V[(opcode & 0x0F00) >> 8] = 0x42 && (opcode & 0x00FF);
+			V[(opcode & 0x0F00) >> 8] = (rand() % 255) & (opcode & 0x00FF);
 			IP = IP + 2;
 			break;
 	case 0xD000: /* 0xDXYN */
@@ -273,9 +275,13 @@ int main(int argc, char **argv) {
 			int8_t Vy = (opcode & 0x00F0) >> 4;
 			int8_t nibble = (opcode & 0x000F);
 			int8_t i, j;
+			V[0xF] = 0;
 			for (i = 0; i < nibble; i++)
-				for(j = 0; j < 7;j ++)
-					screen_surface[Vx + j][Vy + i] = (memory[I + i] >> (7- j)) & 0x0001;
+				for(j = 0; j < 7;j ++) {
+					if(screen_surface[Vx +j][Vy + 1] == 1 && ((memory[I +i] >> (7 - j)) & 0x0001) == 0)
+						V[0xF] = 1;
+					screen_surface[Vx + j][Vy + i] ^= (memory[I + i] >> (7- j)) & 0x0001;
+			}
 			/* glutMainLoopEvent(); */
 			/* refreshScreen(); */
 			refreshRequired = 1;
@@ -284,13 +290,15 @@ int main(int argc, char **argv) {
 	case 0xE000:
 		switch(opcode & 0x000F) {
 		case 0x000E:
-			printf("Skips the next instruction if the key stored "
+			printf("TODO: Skips the next instruction if the key stored "
 				"in V%X is pressed \n", (opcode & 0x0F00) >> 8);
+			IP = IP + 2;
 			break;
 		case 0x0001:
 			printf("Skips the next instruction if the key stored "
 				"in V%X isn't pressed \n",
 				(opcode & 0x0F00) >> 8);
+			IP = IP + 4;
 			break;
 		default:
 			printf("Unknown opcode %hX\n", opcode);

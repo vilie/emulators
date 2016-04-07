@@ -56,7 +56,7 @@ int copytoRAM(int argc, char **argv) {
 		printf("Cannot read ROM, exit\n");
 		return -1;
 	}
-	fread(memory + 512, 1, 1500, ptr_file);
+	fread(memory + 512, 1, 2500, ptr_file);
 	fclose(ptr_file);
 	IP = 512;
 	return 0;

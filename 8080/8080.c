@@ -12,14 +12,14 @@ struct proc {
 	uint16_t PC;
 } pr;
 
-void execInstruction(uint16_t opcode) {
-	int i = (opcode & 0xF0) >> 4;
-	void (*testCallback[3]) (void) = {doA, doB, doC};
-	testCallback[i]();
+void execInstruction(uint8_t opcode) {
+	int i = (opcode & 0xF0) >> 6;
+	void (*testCallback[3]) (uint8_t) = {doB, mov, doC};
+	testCallback[i](opcode);
 }
 
 int main() {
-	uint8_t opcode = 0x24;
+	uint8_t opcode = 0x74;
 	execInstruction(opcode);
 	return 0;
 }

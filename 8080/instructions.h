@@ -1,5 +1,7 @@
-void doA();
+#include <stdint.h>
 
-void doB();
+void mov(uint8_t opcode);
 
-void doC();
+void doB(uint8_t opcode);
+
+void doC(uint8_t opcode);

@@ -5,9 +5,18 @@
 
 struct proc {
 	uint8_t A, flags;
+	union {
 	uint8_t B, C;
+	uint16_t BC;
+	};
+	union {
 	uint8_t D, E;
+	uint16_t DE;
+	};
+	union {
 	uint8_t H, L;
+	uint16_t HL;
+	};
 	uint16_t SP;
 	uint16_t PC;
 } pr;
@@ -19,7 +28,7 @@ void execInstruction(uint8_t opcode) {
 }
 
 int main() {
-	uint8_t opcode = 0x74;
+	uint8_t opcode = 0x76;
 	execInstruction(opcode);
 	return 0;
 }

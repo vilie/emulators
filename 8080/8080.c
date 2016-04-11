@@ -1,18 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
-void doA() {
-	printf("Hello a\n");
-}
-
-void doB() {
-	printf("Hello b\n");
-}
-
-void doC() {
-	printf("Hello c\n");
-}
+#include "instructions.h"
 
 void execInstruction(uint16_t opcode) {
 	int i = (opcode & 0xF000) >> 12;

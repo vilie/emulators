@@ -14,8 +14,17 @@ void hlt(uint8_t opcode) {
 	printf("halt\n");
 }
 
-void doB(uint8_t opcode) {
-	printf("Hello b\n");
+void ZZ(uint8_t opcode) {
+	printf("TODO");
+	/* last 3 */
+	/* NNN110 - MVI r/M
+	   [000/010/100]001 - LXI BC, DE, HL
+	   [001/011/101/111]001 - DAD B, D, H, SP
+           [000/010/001/011/110/111/100/101]010 - STAX B/D; LDAX BD; STA; LDA
+		SHLD, LHLD;
+	   NNN100 - INR r/M
+	   NNN101 - DEC r/M
+	*/
 }
 
 void doC(uint8_t opcode) {

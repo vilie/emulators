@@ -30,6 +30,9 @@ void ZZ(uint8_t opcode) {
 	   001011 - DEC B & C
 	   011011 - DEC D & E
 	   101011 - DEC H & L
+	   110011 - INC SP
+	   111011 - DCX SP
+
 	*/
 }
 

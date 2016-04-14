@@ -18,21 +18,14 @@ void ZZ(uint8_t opcode) {
 	printf("TODO");
 	/* last 3 */
 	/* NNN110 - MVI r/M
-	   [000/010/100]001 - LXI B, D, H
+	   [000/010/100/110]001 - LXI B, D, H, SP
 	   [001/011/101/111]001 - DAD B, D, H, SP
            [000/010/001/011/110/111/100/101]010 - STAX B/D; LDAX BD; STA; LDA
 		SHLD, LHLD;
 	   NNN100 - INR r/M
 	   NNN101 - DCR r/M
-           000011 - INX B
-	   100011 - INX D
-	   000011 - INX H
-	   001011 - DCX B
-	   011011 - DCX D
-	   101011 - DCX H
-	   110001 - LXI SP
-	   110011 - INX SP
-	   111011 - DCX SP
+           [000/010/100/110]011 - INX B, D, H, SP
+	   [001/011/101/111]011 - DCX B, D, H, SP
 	   000111 - RCL
 	   001111 - RRC
 	   010111 - RAL

@@ -23,16 +23,20 @@ void ZZ(uint8_t opcode) {
            [000/010/001/011/110/111/100/101]010 - STAX B/D; LDAX BD; STA; LDA
 		SHLD, LHLD;
 	   NNN100 - INR r/M
-	   NNN101 - DEC r/M
-           000111 - INC B & C
-	   100011 - INC D & E
-	   000011 - INC H & L
-	   001011 - DEC B & C
-	   011011 - DEC D & E
-	   101011 - DEC H & L
-	   110011 - INC SP
+	   NNN101 - DCR r/M
+           000011 - INX B
+	   100011 - INX D
+	   000011 - INX H
+	   001011 - DCX B
+	   011011 - DCX D
+	   101011 - DCX H
+	   110001 - LXI SP
+	   110011 - INX SP
 	   111011 - DCX SP
-
+	   000111 - RCL
+	   001111 - RRC
+	   010111 - RAL
+	   011111 - RAR
 	*/
 }
 

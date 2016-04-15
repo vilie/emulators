@@ -16,6 +16,8 @@ void hlt(uint8_t opcode) {
 
 void ZZ(uint8_t opcode) {
 	printf("TODO");
+	void (*zzCallback[4]) (uint8_t) = {rcl, rrc, ral, rar};
+
 	/* last 3 */
 	/* NNN110 - MVI r/M
 	   [000/010/100/110]001 - LXI B, D, H, SP
@@ -36,3 +38,11 @@ void ZZ(uint8_t opcode) {
 void doC(uint8_t opcode) {
 	printf("Hello c\n");
 }
+
+void rcl(uint8_t opcode) {}
+
+void rrc(uint8_t opcode) {}
+
+void ral(uint8_t opcode) {}
+
+void rar(uint8_t opcode) {}

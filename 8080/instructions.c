@@ -35,9 +35,9 @@ void ZZ(uint8_t opcode) {
 	*/
 }
 
-void doC(uint8_t opcode) {
-	printf("Hello c\n");
-}
+void doC(uint8_t opcode) {}
+
+void doB(uint8_t opcode) {}
 
 void rcl(uint8_t opcode) {}
 

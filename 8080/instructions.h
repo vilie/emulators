@@ -1,5 +1,12 @@
 #include <stdint.h>
 
+#define CF (pr.flags & 0x01)
+#define PF (pr.flags & 0x04)
+#define HC (pr.flags & 0x08)
+#define IF (pr.flags & 0x0F)
+#define ZF (pr.flags & 0x20)
+#define SF (pr.flags & 0x40)
+
 typedef struct {
 	uint8_t A, flags;
 	union {

@@ -42,10 +42,12 @@ void doC(uint8_t opcode) {}
 void doB(uint8_t opcode) {}
 
 void rcl(uint8_t opcode) {
+	pr.flags |= (pr.A & 0x1000) >> 7; /* CF set to most sign bit */
 	pr.A = pr.A << 1 | pr.A >> 7; /* rotate left 1 */
 }
 
 void rrc(uint8_t opcode) {
+	pr.flags |= (pr.A & 0x0001);
 	pr.A = pr.A >> 1 | pr.A << 7; /* rotate right 1 */
 }
 

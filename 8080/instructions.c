@@ -1,6 +1,8 @@
 #include "instructions.h"
 #include <stdio.h>
 
+extern proc pr;
+
 void mov(uint8_t opcode) {
 	char reg[] = {'B', 'C', 'D', 'E', 'H', 'L', 'M', 'A'};
 	if(((opcode >> 3) & 0x7) == 0x6 && (opcode & 0x7) == 0x6)
@@ -39,9 +41,13 @@ void doC(uint8_t opcode) {}
 
 void doB(uint8_t opcode) {}
 
-void rcl(uint8_t opcode) {}
+void rcl(uint8_t opcode) {
+	pr.A = pr.A << 1 | pr.A >> 7; /* rotate left 1 */
+}
 
-void rrc(uint8_t opcode) {}
+void rrc(uint8_t opcode) {
+	pr.A = pr.A >> 1 | pr.A << 7; /* rotate right 1 */
+}
 
 void ral(uint8_t opcode) {}
 

@@ -1,5 +1,11 @@
 #include <stdint.h>
 
+#ifdef DEBUG
+# define DEBUG_PRINT(x) printf x
+#else
+# define DEBUG_PRINT(x) do {} while (0)
+#endif
+
 #define CF (pr.flags & 0x01)
 #define PF (pr.flags & 0x04)
 #define HC (pr.flags & 0x08)

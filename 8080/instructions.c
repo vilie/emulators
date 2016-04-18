@@ -18,8 +18,8 @@ void hlt(uint8_t opcode) {
 
 void ZZNNNNNN(uint8_t opcode) {
 	void (*rotates[4]) (uint8_t) = {rcl, rrc, ral, rar}; /* rotates */
-	if(opcode & 0x07 == 0x07) /* ZZZNN111 */
-		rotates[opcode & 0x18];
+	if((opcode & 0x07) == 0x07) /* ZZZNN111 */
+		rotates[(opcode & 0x18) >> 3] (opcode);
 	return;
 
 	/* last 3 */
@@ -44,25 +44,31 @@ void doC(uint8_t opcode) {}
 void doB(uint8_t opcode) {}
 
 void rcl(uint8_t opcode) {
+	DEBUG_PRINT(("rcl\n"));
 	pr.flags |= (pr.A & 0x10) >> 7; /* CF set to most sign bit */
 	pr.A = pr.A << 1 | pr.A >> 7; /* rotate left 1 */
 }
 
 void rrc(uint8_t opcode) {
+	DEBUG_PRINT(("rrc\n"));
 	pr.flags |= (pr.A & 0x01);
 	pr.A = pr.A >> 1 | pr.A << 7; /* rotate right 1 */
 }
 
 void ral(uint8_t opcode) {
+	DEBUG_PRINT(("ral\n  "));
 	uint8_t backupFlags = pr.flags; /* blackup CF */
 	rcl(opcode);
+	DEBUG_PRINT(("  exchange CF with least significant in A\n"));
 	pr.flags = pr.flags & 0xFE + pr.A & 0x01; /* CF = least significant in A */
 	pr.A = pr.A & 0xFE + backupFlags & 0x01; /* A least significant = CF (backup) */
 }
 
 void rar(uint8_t opcode) {
+	DEBUG_PRINT(("rar\n  "));
 	uint8_t backupFlags = pr.flags; /* backup CF */
 	rrc(opcode);
+	DEBUG_PRINT(("  exchange CF with most significant in A\n"));
 	pr.flags = pr.flags & 0xFE + (pr.A >> 7); /* CF = most significant in A */
 	pr.A = pr.A & 0x7F + backupFlags << 7; /* A most significant = CF (backup) */
 }

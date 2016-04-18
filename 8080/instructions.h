@@ -27,6 +27,8 @@ typedef struct {
 
 void mov(uint8_t opcode);
 
+void ZZNNNNNN(uint8_t opcode);
+
 void doB(uint8_t opcode);
 
 void doC(uint8_t opcode);

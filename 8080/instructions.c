@@ -16,9 +16,11 @@ void hlt(uint8_t opcode) {
 	printf("halt\n");
 }
 
-void ZZ(uint8_t opcode) {
-	printf("TODO");
-	void (*zzCallback[4]) (uint8_t) = {rcl, rrc, ral, rar};
+void ZZNNNNNN(uint8_t opcode) {
+	void (*rotates[4]) (uint8_t) = {rcl, rrc, ral, rar}; /* rotates */
+	if(opcode & 0x07 == 0x07) /* ZZZNN111 */
+		rotates[opcode & 0x18];
+	return;
 
 	/* last 3 */
 	/* NNN110 - MVI r/M

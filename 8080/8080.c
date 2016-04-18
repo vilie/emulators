@@ -7,7 +7,7 @@ proc pr;
 
 void execInstruction(uint8_t opcode) {
 	int i = (opcode & 0xF0) >> 6;
-	void (*testCallback[3]) (uint8_t) = {doB, mov, doC};
+	void (*testCallback[3]) (uint8_t) = {ZZNNNNNN, mov, doC};
 	testCallback[i](opcode);
 }
 

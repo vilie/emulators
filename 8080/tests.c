@@ -50,12 +50,11 @@ void test_rar() {
 }
 
 int main() {
-	test_rcl();
-	printf("\n");
-	test_rrc();
-	printf("\n");
-	test_ral();
-	printf("\n");
-	test_rar();
+	int i;
+	void (*tests[4]) (void) = {test_rcl, test_rrc, test_ral, test_rar};
+	for(i = 0; i < 4; i++) {
+		tests[i]();
+		printf("\n");
+	}
 	return 0;
 }

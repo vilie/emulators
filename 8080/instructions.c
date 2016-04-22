@@ -13,7 +13,7 @@ void mov(uint8_t opcode) {
 }
 
 void hlt(uint8_t opcode) {
-	printf("halt\n");
+	DEBUG_PRINT(("halt\n"));
 }
 
 void ZZNNNNNN(uint8_t opcode) {

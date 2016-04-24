@@ -5,9 +5,12 @@ extern proc pr;
 
 void mov(uint8_t opcode) {
 	char reg[] = {'B', 'C', 'D', 'E', 'H', 'L', 'M', 'A'};
+	uint8_t* regaddr[] = {&pr.B, &pr.C, &pr.D, &pr.E, &pr.H,
+				&pr.L, &pr.L /* TODO: M  */, &pr.A};
 	if(((opcode >> 3) & 0x7) == 0x6 && (opcode & 0x7) == 0x6)
 		hlt(opcode); /* mov M, M -> halt */
 	else {
+		regaddr[(opcode >> 3) & 0x7] = regaddr[opcode & 0x7];
 		DEBUG_PRINT(("mov %c %c\n", reg[(opcode >> 3) & 0x7], reg[opcode & 0x7]));
 	}
 }

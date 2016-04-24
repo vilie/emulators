@@ -49,10 +49,20 @@ void test_rar() {
 	assert(pr.A == 0b10110101 && (CF == 0x00));
 }
 
+void test_mov() {
+	pr.C = 0b01101010;
+	pr.flags |= 0x01; /* CF = 1 */
+	DEBUG_PRINT(("A="binpat" CF=%d\n", tobin(pr.A), CF));
+	uint8_t opcode = 0b01111001;
+	execInstruction(opcode);
+	DEBUG_PRINT(("A="binpat" CF=%d\n", tobin(pr.A), CF));
+	assert(pr.A == 0b01101010 && (CF == 0x00));
+}
+
 int main() {
 	int i;
-	void (*tests[4]) (void) = {test_rcl, test_rrc, test_ral, test_rar};
-	for(i = 0; i < 4; i++) {
+	void (*tests[]) (void) = {test_rcl, test_rrc, test_ral, test_rar, test_mov};
+	for(i = 0; i < 5; i++) {
 		tests[i]();
 		printf("\n");
 	}

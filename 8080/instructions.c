@@ -10,7 +10,7 @@ void mov(uint8_t opcode) {
 	if(((opcode >> 3) & 0x7) == 0x6 && (opcode & 0x7) == 0x6)
 		hlt(opcode); /* mov M, M -> halt */
 	else {
-		regaddr[(opcode >> 3) & 0x7] = regaddr[opcode & 0x7];
+		regaddr[(opcode >> 3) & 0x7] = regaddr[opcode & 0x7]; //TODO: Maybe replace with memcpy?
 		DEBUG_PRINT(("mov %c %c\n", reg[(opcode >> 3) & 0x7], reg[opcode & 0x7]));
 	}
 }

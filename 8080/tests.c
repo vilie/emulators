@@ -52,11 +52,11 @@ void test_rar() {
 void test_mov() {
 	pr.C = 0b01101010;
 	pr.flags |= 0x01; /* CF = 1 */
-	DEBUG_PRINT(("A="binpat" CF=%d\n", tobin(pr.A), CF));
+	DEBUG_PRINT(("A="binpat" C="binpat"\n", tobin(pr.A), tobin(pr.C)));
 	uint8_t opcode = 0b01111001;
 	execInstruction(opcode);
-	DEBUG_PRINT(("A="binpat" CF=%d\n", tobin(pr.A), CF));
-	assert(pr.A == 0b01101010 && (CF == 0x00));
+	DEBUG_PRINT(("A="binpat, tobin(pr.A)));
+	assert(pr.A == 0b01101010);
 }
 
 int main() {

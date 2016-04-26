@@ -1,18 +1,5 @@
 #include <stdint.h>
 
-#ifdef DEBUG
-# define DEBUG_PRINT(x) printf x
-#else
-# define DEBUG_PRINT(x) do {} while (0)
-#endif
-
-#define CF (pr.flags & 0x01)
-#define PF (pr.flags & 0x04)
-#define HC (pr.flags & 0x08)
-#define IF (pr.flags & 0x0F)
-#define ZF (pr.flags & 0x20)
-#define SF (pr.flags & 0x40)
-
 typedef struct {
 	uint8_t A, flags;
 	union {
@@ -29,7 +16,25 @@ typedef struct {
 	};
 	uint16_t SP;
 	uint16_t PC;
+
+	/* TODO: Maybe move the memory out of the struct? */
+	uint8_t memory[65536];
 } proc ;
+
+#define prM (pr.memory[pr.HL])
+
+#ifdef DEBUG
+# define DEBUG_PRINT(x) printf x
+#else
+# define DEBUG_PRINT(x) do {} while (0)
+#endif
+
+#define CF (pr.flags & 0x01)
+#define PF (pr.flags & 0x04)
+#define HC (pr.flags & 0x08)
+#define IF (pr.flags & 0x0F)
+#define ZF (pr.flags & 0x20)
+#define SF (pr.flags & 0x40)
 
 void mov(uint8_t opcode);
 

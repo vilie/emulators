@@ -55,14 +55,26 @@ void test_mov() {
 	DEBUG_PRINT(("A="binpat" C="binpat"\n", tobin(pr.A), tobin(pr.C)));
 	uint8_t opcode = 0b01111001;
 	execInstruction(opcode);
-	DEBUG_PRINT(("A="binpat, tobin(pr.A)));
+	DEBUG_PRINT(("A="binpat"\n", tobin(pr.A)));
+	assert(pr.A == 0b01101010);
+}
+
+void test_movmem() {
+	pr.C = 0b01101010;
+	pr.H = 0x12;
+	pr.L = 0x34;
+	pr.flags |= 0x01; /* CF = 1 */
+	DEBUG_PRINT(("M=%d [M]="binpat" C="binpat"\n", pr.HL, tobin(prM), tobin(pr.C)));
+	uint8_t opcode = 0b01110001;
+	execInstruction(opcode);
+	DEBUG_PRINT(("[M]="binpat, tobin(prM)));
 	assert(pr.A == 0b01101010);
 }
 
 int main() {
 	int i;
-	void (*tests[]) (void) = {test_rcl, test_rrc, test_ral, test_rar, test_mov};
-	for(i = 0; i < 5; i++) {
+	void (*tests[]) (void) = {test_rcl, test_rrc, test_ral, test_rar, test_mov, test_movmem};
+	for(i = 0; i < 6; i++) {
 		tests[i]();
 		printf("\n");
 	}

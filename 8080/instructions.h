@@ -3,15 +3,15 @@
 typedef struct {
 	uint8_t A, flags;
 	union {
-	uint8_t B, C;
+	struct {uint8_t B, C;};
 	uint16_t BC;
 	};
 	union {
-	uint8_t D, E;
+	struct {uint8_t D, E;};
 	uint16_t DE;
 	};
 	union {
-	uint8_t H, L;
+	struct {uint8_t H, L;};
 	uint16_t HL;
 	};
 	uint16_t SP;

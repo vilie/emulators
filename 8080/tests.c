@@ -67,8 +67,12 @@ void test_movmem() {
 	DEBUG_PRINT(("M=%x [M]="binpat" C="binpat"\n", pr.HL, tobin(prM), tobin(pr.C)));
 	uint8_t opcode = 0b01110001;
 	execInstruction(opcode);
-	DEBUG_PRINT(("[M]="binpat, tobin(prM)));
-	assert(pr.A == 0b01101010);
+	DEBUG_PRINT(("[M]="binpat"\n", tobin(prM)));
+	assert(prM == 0b01101010);
+	opcode = 0b01000110;
+	execInstruction(opcode);
+	DEBUG_PRINT(("B="binpat"\n", tobin(pr.B)));
+	assert(pr.B == 0b01101010);
 }
 
 int main() {

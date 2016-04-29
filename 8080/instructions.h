@@ -3,15 +3,27 @@
 typedef struct {
 	uint8_t A, flags;
 	union {
+	#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	struct {uint8_t C, B;};
+	#else
 	struct {uint8_t B, C;};
+	#endif
 	uint16_t BC;
 	};
 	union {
+	#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	struct {uint8_t E, D;};
+	#else
 	struct {uint8_t D, E;};
+	#endif
 	uint16_t DE;
 	};
 	union {
+	#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	struct {uint8_t L, H;};
+	#else
 	struct {uint8_t H, L;};
+	#endif
 	uint16_t HL;
 	};
 	uint16_t SP;

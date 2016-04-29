@@ -6,6 +6,13 @@
 
 proc pr;
 
+void endianess() {
+	pr.H = 0x2B;
+	pr.L = 0xE9;
+	assert(pr.HL == 0x2BE9);
+	DEBUG_PRINT(("Endieness OK\n"));
+}
+
 void execInstruction(uint8_t opcode) {
 	int i = (opcode & 0xF0) >> 6;
 	void (*testCallback[3]) (uint8_t) = {ZZNNNNNN, mov, doC};
@@ -77,8 +84,8 @@ void test_movmem() {
 
 int main() {
 	int i;
-	void (*tests[]) (void) = {test_rcl, test_rrc, test_ral, test_rar, test_mov, test_movmem};
-	for(i = 0; i < 6; i++) {
+	void (*tests[]) (void) = {endianess, test_rcl, test_rrc, test_ral, test_rar, test_mov, test_movmem};
+	for(i = 0; i < 7; i++) {
 		tests[i]();
 		printf("\n");
 	}

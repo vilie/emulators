@@ -77,3 +77,9 @@ void rar(uint8_t opcode) {
 	pr.flags = (pr.flags & 0xFE) + (pr.A >> 7); /* CF = most significant in A */
 	pr.A = (pr.A & 0x7F) + (backupFlags << 7); /* A most significant = CF (backup) */
 }
+
+void xchg(uint8_t opcode) {
+	pr.DE ^= pr.HL;
+	pr.HL ^= pr.DE;
+	pr.DE ^= pr.HL;
+}

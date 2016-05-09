@@ -64,4 +64,6 @@ void rrc(uint8_t opcode);
 
 void ral(uint8_t opcode);
 
-void rar(uint8_t opcode); 
+void rar(uint8_t opcode);
+
+void xchg(uint8_t opcode);

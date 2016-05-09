@@ -82,10 +82,20 @@ void test_movmem() {
 	assert(pr.B == 0b01101010);
 }
 
+void test_swap() {
+	pr.D = 0x33;
+	pr.E = 0x55;
+	pr.H = 0x00;
+	pr.L = 0xFF;
+	xchg(42); //TODO: Replace with execInstruction
+	assert(pr.D == 0x00 && pr.E == 0xFF && pr.H == 0x33 && pr.L == 0x55);
+	DEBUG_PRINT(("swap"));
+}
+
 int main() {
 	int i;
-	void (*tests[]) (void) = {endianess, test_rcl, test_rrc, test_ral, test_rar, test_mov, test_movmem};
-	for(i = 0; i < 7; i++) {
+	void (*tests[]) (void) = {endianess, test_rcl, test_rrc, test_ral, test_rar, test_mov, test_movmem, test_swap};
+	for(i = 0; i < 8; i++) {
 		tests[i]();
 		printf("\n");
 	}

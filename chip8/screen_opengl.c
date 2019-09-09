@@ -1,4 +1,5 @@
 #include <GL/glut.h>
+#include <GL/freeglut_ext.h>
 #include <stdio.h>
 
 #define HEIGHT 32
@@ -6,6 +7,10 @@
 
 extern uint8_t screen_surface[WIDTH][HEIGHT];
 extern uint8_t keyPressedEv;
+
+void checkKeyPressed() {
+	glutMainLoopEvent(); /* Check if a key was pressed */
+}
 
 void refreshScreen() {
 	/* printf("Am intrat in refresh \n"); */

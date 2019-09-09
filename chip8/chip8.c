@@ -5,45 +5,13 @@
  * Copyright (C) 2016 Valentin Ilie
  */
 
+#include "chip8.h"
+
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
 #include <time.h>
-#include <GL/glut.h>
-
-int update_screen(int* argc, char** argv);
-
-uint8_t memory[4096]; /* memory */
-uint8_t keyPressedEv; /* Key that was pressed in this cycle */
-uint16_t IP; /* PC */
-uint16_t I = 0; /* 16 bit register */
-uint8_t SP; /* Stack pointer */
-uint8_t V[16]; /* V registers */
-uint16_t stack[16]; /* stack registers */
-int8_t delay_timer; /* Delay timer */
-int8_t sound_timer; /* Sound timer */
-int refreshRequired; /* Screen refresh required */
-
-uint8_t screen_surface[64][32]; /* 64 x 32 screen */
-
-uint8_t sprites[80] = {
-	0xF0, 0x90, 0x90, 0x90, 0xF0, /* 0 */
-	0x20, 0x60, 0x20, 0x20, 0x70, /* 1 */
-	0xF0, 0x10, 0xF0, 0x80, 0xF0, /* 2 */
-	0xF0, 0x10, 0xF0, 0x10, 0xF0, /* 3 */
-	0x90, 0x90, 0xF0, 0x10, 0x10, /* 4 */
-	0xF0, 0x80, 0xF0, 0x10, 0xF0, /* 5 */
-	0xF0, 0x80, 0xF0, 0x90, 0xF0, /* 6 */
-	0xF0, 0x10, 0x20, 0x40, 0x40, /* 7 */
-	0xF0, 0x90, 0xF0, 0x90, 0xF0, /* 8 */
-	0xF0, 0x90, 0xF0, 0x10, 0xF0, /* 9 */
-	0xF0, 0x90, 0xF0, 0x90, 0x90, /* A */
-	0xE0, 0x90, 0xE0, 0x90, 0xE0, /* B */
-	0xF0, 0x80, 0x80, 0x80, 0xF0, /* C */
-	0xE0, 0x90, 0x90, 0x90, 0xE0, /* D */
-	0xF0, 0x80, 0xF0, 0x80, 0xF0, /* E */
-	0xF0, 0x80, 0xF0, 0x80, 0x80  /* F */
-};
+#include <unistd.h>
 
 int copytoRAM(int argc, char **argv) {
 	FILE *ptr_file;
@@ -415,9 +383,8 @@ int main(int argc, char **argv) {
 	if (refreshRequired) {
 		refreshRequired = 0;
 		refreshScreen();
-		//glutMainLoopEvent();
 	}
-	glutMainLoopEvent(); /* Check if a key was pressed */
+	checkKeyPressed();
 	/* printf("\n"); */
 
 	printf("System status\n\n");
